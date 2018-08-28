@@ -14,7 +14,7 @@ WHT_BLK = 07h
 ;;; MACROS
 macro macdrawchar char*,color* {
 	mov byte[di],char
-	add di, 1
+	inc di
 	mov byte[di],color
 }
 
@@ -28,38 +28,38 @@ macro setcell x*, y*, char*, color* {
 macro drawstring x*, y*, color* {
 	mov di,(y*80+x)*2
 	mov ah, [es:bx]
-stringloop:
+@@:
 	mov byte[di],ah
-	add di, 1
+	inc di
 	mov byte[di],color
-	add di, 1
-	add bx, 1
+	inc di
+	inc bx
 	mov ah, [es:bx]
-	cmp ah, 0
-	jne stringloop
+	test ah, ah
+	jne @b
 }
 
 ;;; MAIN
 	;; Set the video mode to 3 - 16 color text
-	mov ah,0
-	mov al,3
+	xor ah, ah
+	mov al, 3
 	int 10h
 	;; Set DS to the video memory
 	mov ax, 0B800h
 	mov ds, ax
 	;; Draw an A
-	mov di,0
+	xor di, di
 	setcell 2, 2, 'a', 20h
 	mov bx, msg
 	drawstring 0, 0, BLK_WHT
 	;; Wait and exit.
 	call waitkey
-	mov ah,4Ch
+	mov ah, 4Ch
 	int 21h
 
 ;;; SUBROUTINES
 waitkey:
-	mov ah, 0
+	xor ah, ah
 	int 16h
 	ret
 

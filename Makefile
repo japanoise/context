@@ -2,7 +2,7 @@ progname=context
 
 all: $(progname).com
 
-$(progname).com: $(progname).s
+%.com: %.s
 	fasm $^ $@
 
 clean:
